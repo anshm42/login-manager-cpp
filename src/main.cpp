@@ -31,8 +31,6 @@ class login_manager
         }
         int newUser()
         {
-            userFile.open("../resources/usernames.dat", ios::out | ios::in);
-            passFile.open("../resources/passwords.dat", ios::out);
         
             cout << "Enter a username: ";
             cin >> newUsername;
@@ -42,6 +40,7 @@ class login_manager
                 if (newUsername == checkName)
                 {
                     cout << "There is already a user with the same name." << endl;
+                    userFile.close();
                     return 1;
                 }
             }
@@ -52,17 +51,32 @@ class login_manager
             cout << "Re-type password: ";
             cin >> newPasswordConfirm;
 
-            if (newPassword == newPasswordConfirm)
+            if (newPassword != newPasswordConfirm)
             {
-                if (newPassword.size() > 16)
-                {
-                    cout << "Password must be <= 16" << endl;
+                
+                cout << "Passwords must match.\n";
+                return 1;
 
-                    return 1;
-                }
-            
             }
+
+            else if (newPassword.size() > 16)
+            {
+                cout << "Password must be <= 16" << endl;
+                return 1;
+            }
+            
+            userFile.open("../resources/usernames.dat", ios::app | ios::in);
+            passFile.open("../resources/passwords.dat", ios::app);
+            userFile << newUsername << "\n";
+            passFile << newPassword << "\n";
+
+            userFile.close();
+            passFile.close();
+
+            cout << "Your user has been created!\n";
             return 0;
+
+            
         }
 
         void login()
@@ -117,6 +131,8 @@ class login_manager
         
         int line_nu = 0;
         int line_nu2 = 0;
+
+        int spaceCount = 0;
 
         string username;
         string usernameAttempt;
